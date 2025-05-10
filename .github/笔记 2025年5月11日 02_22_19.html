@@ -1,0 +1,738 @@
+<!-- 完整可运行 HTML 代码 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号信息整理</title>
+    <style>
+        :root {
+            --color-pink: #FFD6E0;
+            --color-blue: #C4E4FF;
+            --color-yellow: #FFF5C0;
+            --color-purple: #E8D7FF;
+            --color-green: #D4EDDA;
+            --text-dark: #333;
+            --text-light: #666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background-color: var(--color-purple);
+            color: white;
+        }
+        
+        .content {
+            display: none;
+        }
+        
+        .content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .apple-card::before {
+            background-color: var(--color-pink);
+        }
+        
+        .email-card::before {
+            background-color: var(--color-blue);
+        }
+        
+        .social-card::before {
+            background-color: var(--color-yellow);
+        }
+        
+        .other-card::before {
+            background-color: var(--color-purple);
+        }
+        
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card h2 i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .account-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .account-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .account-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+        
+        .account-detail {
+            color: var(--text-light);
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-light);
+            font-size: 12px;
+            padding: 20px 0;
+        }
+        
+        .save-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--color-pink), var(--color-blue));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            margin: 30px auto;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-user-circle"></i> 账号信息整理</h1>
+        <p>2025年5月11日 · 巴塞罗那</p>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="apple">苹果ID</div>
+        <div class="tab" data-tab="email">邮箱</div>
+        <div class="tab" data-tab="social">社交</div>
+        <div class="tab" data-tab="other">其他</div>
+    </div>
+    
+    <div id="apple" class="content active">
+        <div class="card apple-card">
+            <h2><i class="fab fa-apple"></i> 苹果ID</h2>
+            
+            <div class="account-item">
+                <div class="account-title">国区</div>
+                <div class="account-detail">itspomme@outlook.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">香港</div>
+                <div class="account-detail">itspomme3@outlook.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">台湾</div>
+                <div class="account-detail">itspomme6@outlook.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">土耳其</div>
+                <div class="account-detail">itspomme9@gmail.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">阿根廷</div>
+                <div class="account-detail">itspomme0@gmail.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">美国</div>
+                <div class="account-detail">
+                    itspomme7@gmail.com<br>
+                    itspommer@gmail.com<br>
+                    itspommex@gmail.com
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">联系电话</div>
+                <div class="account-detail">
+                    17625293442 - 国区/香港/美区(itspommer)<br>
+                    17625393442 - 美区(itspommex)<br>
+                    19026484584 - 美区(itspomme7)/台湾/土耳其/阿根廷
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">苹果邮箱</div>
+                <div class="account-detail">
+                    itspomme@icloud.com<br>
+                    itspomme3@icloud.com<br>
+                    itspomme6@icloud.com<br>
+                    itspomme9@outlook.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card apple-card">
+            <h2><i class="fas fa-shield-alt"></i> 安全验证</h2>
+            
+            <div class="account-item">
+                <div class="account-title">谷歌账号验证</div>
+                <div class="account-detail">
+                    <strong>x r 123</strong> - 辅助邮箱: itspomme@outlook.com<br>
+                    手机验证: 17625293442 (itspommex无)<br><br>
+                    <strong>0 6 7 9 11</strong> - 辅助邮箱: itspomme@outlook.com<br>
+                    手机验证: 19026484594
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">Outlook验证</div>
+                <div class="account-detail">
+                    <strong>itspomme (1 2 s)</strong> - 辅助邮箱: itspomme@foxmail.com<br>
+                    手机验证: 17615293442<br><br>
+                    <strong>itspomme (x 3)</strong> - 辅助邮箱: itspomme@outlook.com<br>
+                    手机验证: 17625293442<br><br>
+                    <strong>itspomme (0 5 6 7 9)</strong> - 辅助邮箱: itspomme@outlook.com<br>
+                    手机验证: 17625193442
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="email" class="content">
+        <div class="card email-card">
+            <h2><i class="fas fa-envelope"></i> QQ邮箱</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    1071898008@qq.com<br>
+                    itspomme@qq.com<br>
+                    itspommex@foxmail.com<br>
+                    2422639949@qq.com<br>
+                    itspomme@qq.com<br>
+                    itspomme@foxmail.com<br>
+                    417564454@qq.com<br>
+                    itsmanzanas@foxmail.com.com<br>
+                    3761652021@qq.com<br>
+                    itspomme7@qq.com<br>
+                    itspomme7@foxmail.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card email-card">
+            <h2><i class="fab fa-google"></i> 谷歌邮箱</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme0@gmail.com<br>
+                    itspommer@gmail.com<br>
+                    itspommex@gmail.com<br>
+                    itspomme1@gmail.com<br>
+                    itspomme2@gmail.com<br>
+                    itspomme3@gmail.com<br>
+                    itapomme6@gmail.com<br>
+                    itspomme7@gmail.com<br>
+                    itspomme9@gmail.com<br>
+                    itspomme11@gmail.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card email-card">
+            <h2><i class="fas fa-envelope-open-text"></i> Outlook邮箱</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme@outlook.com<br>
+                    itspomme1@outlook.com<br>
+                    itspomme2@outlook.com<br>
+                    itspommes@outlook.com<br>
+                    itspomme0@outlook.com<br>
+                    itspomme3@outlook.com<br>
+                    itspomme5@outlook.com<br>
+                    itspomme6@outlook.com<br>
+                    itspomme7@outlook.com<br>
+                    itspomme9@outlook.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card email-card">
+            <h2><i class="fas fa-at"></i> 其他邮箱</h2>
+            
+            <div class="account-item">
+                <div class="account-title">新浪邮箱</div>
+                <div class="account-detail">
+                    itspomme@sina.com<br>
+                    itspommex@sina.com<br>
+                    itspomme7@sina.com<br>
+                    itsElmas@sina.com
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">阿里云邮箱</div>
+                <div class="account-detail">
+                    itspomme@aliyun.com<br>
+                    itspomme7@aliyun.com
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">雅虎邮箱</div>
+                <div class="account-detail">itspomme@yahoo.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">Proton邮箱</div>
+                <div class="account-detail">itspomme@pronton.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">Aol邮箱</div>
+                <div class="account-detail">itspomme@aol.com</div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">MyMail邮箱</div>
+                <div class="account-detail">
+                    itspomme@mymail.com<br>
+                    itspomme7@mymail.com
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="social" class="content">
+        <div class="card social-card">
+            <h2><i class="fab fa-qq"></i> QQ</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    1071898008<br>
+                    2422639949<br>
+                    417564454<br>
+                    192988337<br>
+                    332581987<br>
+                    3761652021
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-weixin"></i> 微信</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme3<br>
+                    itspomme6<br>
+                    itspomme7<br>
+                    itspomme9<br>
+                    itspommex
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-tiktok"></i> 抖音</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme3<br>
+                    itspomme6<br>
+                    itspomme7<br>
+                    itspomme9
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-weibo"></i> 微博</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme<br>
+                    牙牙乐夕i<br>
+                    19026484584
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-instagram"></i> Instagram</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme<br>
+                    itspomme7
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-facebook"></i> Facebook</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">itspomme</div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-telegram"></i> Telegram</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    <strong>itspommer</strong><br>
+                    频道: <a href="https://t.me/itspomme_r" target="_blank">https://t.me/itspomme_r</a><br>
+                    讨论组: <a href="https://t.me/itspomme_sitspommex" target="_blank">https://t.me/itspomme_sitspommex</a><br><br>
+                    
+                    <strong>itspommex</strong><br>
+                    频道: <a href="https://t.me/itspomme_x" target="_blank">https://t.me/itspomme_x</a><br>
+                    讨论组: <a href="https://t.me/itspomme_x" target="_blank">https://t.me/itspomme_x</a><br><br>
+                    
+                    <strong>itspomme7</strong><br>
+                    频道: <a href="https://t.me/itspomme_7" target="_blank">https://t.me/itspomme_7</a><br>
+                    讨论组: <a href="https://t.me/itspommeitspomme3" target="_blank">https://t.me/itspommeitspomme3</a><br><br>
+                    
+                    <strong>itspomme3</strong><br>
+                    频道: <a href="https://t.me/itspomme3" target="_blank">https://t.me/itspomme3</a><br>
+                    讨论组: <a href="https://t.me/itspomme_3YouTube" target="_blank">https://t.me/itspomme_3YouTube</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-youtube"></i> YouTube</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    itspomme (r x 0 1 2 3 6 7 9)@gmail.com<br>
+                    频道: <a href="https://www.youtube.com/@itspomme" target="_blank">https://www.youtube.com/@itspomme</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-line"></i> LINE</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">itspomme7</div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-twitter"></i> X (Twitter)</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">itspomme7</div>
+            </div>
+        </div>
+        
+        <div class="card social-card">
+            <h2><i class="fab fa-whatsapp"></i> WhatsApp</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">itspomme7</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="other" class="content">
+        <div class="card other-card">
+            <h2><i class="fas fa-cloud"></i> 网盘</h2>
+            
+            <div class="account-item">
+                <div class="account-title">蓝奏云</div>
+                <div class="account-detail">
+                    <a href="https://itspomme.lanzoue.com" target="_blank">https://itspomme.lanzoue.com</a><br>
+                    <a href="https://elmas.lanzoul.com" target="_blank">https://elmas.lanzoul.com</a>
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">百度云</div>
+                <div class="account-detail">
+                    账号: 牛排咖喱茶<br>
+                    密码: 牛排咖喱茶s (778899ss)<br>
+                    绑定邮箱: itspomme7@outlook.com<br>
+                    绑定手机: 19026484584
+                </div>
+            </div>
+        </div>
+        
+        <div class="card other-card">
+            <h2><i class="fas fa-gamepad"></i> 游戏</h2>
+            
+            <div class="account-item">
+                <div class="account-title">日服LOL</div>
+                <div class="account-detail">
+                    itspomme1<br>
+                    绑定邮箱: itspomme@outlook.com
+                </div>
+            </div>
+            
+            <div class="account-item">
+                <div class="account-title">台服LOL</div>
+                <div class="account-detail">
+                    itspommexs<br>
+                    绑定邮箱: itspomme@outlook.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card other-card">
+            <h2><i class="fas fa-mobile-alt"></i> 软件</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    易欧·Dupay·paypal<br>
+                    账号: itspomme<br>
+                    绑定邮箱: itspomme@outlook.com
+                </div>
+            </div>
+        </div>
+        
+        <div class="card other-card">
+            <h2><i class="fas fa-phone-alt"></i> 常用联系方式</h2>
+            
+            <div class="account-item">
+                <div class="account-detail">
+                    <strong>最常用手机号</strong>: 17625293442, 19026484584<br><br>
+                    <strong>QQ邮箱</strong>: 3761652021@qq.com (手机: 19026484584)<br>
+                    <strong>其他账号</strong>: 大多使用 17625293442
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="save-btn" id="saveBtn"><i class="fas fa-camera"></i> 保存图片</button>
+    
+    <div class="footer">
+       
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 标签切换功能
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有active类
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前标签和内容
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 复制功能
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('copy-btn')) {
+                const textToCopy = e.target.parentElement.nextElementSibling.textContent;
+                navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+                    showToast('已复制到剪贴板');
+                }).catch(err => {
+                    showToast('复制失败');
+                    console.error('复制失败:', err);
+                });
+            }
+        });
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+        
+        // 保存图片功能
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            // 隐藏保存按钮避免出现在截图中
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.style.display = 'none';
+            
+            // 截取整个页面
+            html2canvas(document.body, {
+                scale: 2, // 提高分辨率
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                // 显示保存按钮
+                saveBtn.style.display = 'block';
+                
+                // 转换为base64
+                const imageData = canvas.toDataURL('image/png');
+                
+                // 调用保存API
+                if (typeof wusiSaveImage !== 'undefined') {
+                    wusiSaveImage(imageData).then(function(result) {
+                        if (result.status === "success") {
+                            showToast('图片保存成功！');
+                        } else {
+                            showToast('保存失败：' + (result.message || "未知错误"));
+                        }
+                    });
+                } else {
+                    showToast('请升级到无思微程序最新版本后再使用保存图片功能哦');
+                }
+            }).catch(err => {
+                saveBtn.style.display = 'block';
+                showToast('生成图片失败');
+                console.error('生成图片失败:', err);
+            });
+        });
+    </script>
+</body>
+</html>
